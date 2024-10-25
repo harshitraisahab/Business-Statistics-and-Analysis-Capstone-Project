@@ -1,22 +1,31 @@
-# Country Grouping Analysis
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error, r2_score
 
-## Objective 
-Categorise and cluster countries based on their socio-economic and health factors . Based on this , We will find out the countries which are in dire need of help .
+# Load the dataset
+data = pd.read_csv('housing_survey.csv')
 
-## Data Description
-We have 167 countries reflected by 9 different socio-economic/health features:
+# Clean the data (assuming cleaning steps are done here)
+data.dropna(inplace=True)  # Simple example of dropping missing values
 
-| Variable | Description | Type     |
-| :-------------: | :---------- | :-----------: |
-|`country`|Name of country|`chr`|
-|`child_mort`|Death of children under 5 years of age per 1000 live births|`dbl`|
-|`exports`|Exports of goods and services per capita.  Given as %age of GDP per capita.|`dbl`|
-|`health`|Total health spending per capita.  Given as %age of GDP per capita.|`dbl`|
-|`imports`|Imports of goods and services per capita.  Given as %age of the GDP per capita|`dbl`|
-|`income`|Net income per person|`int`|
-|`inflation`|The measurement of the annual growth rate of the Total GDP|`dbl`|
-|`life_expec`|The average number of years a new born child would live if the current mortality patters are to remain the same|`dbl`|
-|`total_fer`|The number of children that would be born to each woman if the current age-fertility rates remain the same|`dbl`|
-|`gdpp`|The GDP per capita.  Calculated as the Total GDP divided by the total population|`int`|
+# Define independent and dependent variables
+X = data[['size', 'num_rooms', 'other_features']]  # Replace with actual feature names
+y = data['market_value']
 
-We will perform some **principal component analysis**, **k-means clustering**, and **hierarchical clustering** using scikit-learn and matplotlib.
+# Split the data
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Create and fit the model
+model = LinearRegression()
+model.fit(X_train, y_train)
+
+# Make predictions
+y_pred = model.predict(X_test)
+
+# Evaluate the model
+mse = mean_squared_error(y_test, y_pred)
+r2 = r2_score(y_test, y_pred)
+
+print(f'Mean Squared Error: {mse}')
+print(f'R^2 Score: {r2}')
